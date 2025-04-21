@@ -1,9 +1,5 @@
 .cache/
 .direnv/
-obj/
-bin/
-
-Makefile
-*.make
-compile_commands.json
+.zig-cache/
+zig-out
 

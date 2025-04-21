@@ -12,12 +12,10 @@
       pkgs = import nixpkgs {inherit system;};
     in {
       devShells.default = pkgs.mkShell (with pkgs; {
-        packages = [clang clang-tools premake5 inja];
+        packages = [tree gdb clang clang-tools ];
         shellHook = ''
-          export LD_LIBRARY_PATH=${inja}:${clang}/lib
+          export LD_LIBRARY_PATH=${inja}:${clang}/lib:${gdb}
           export ISYSTEM=${clang}/bin/clang++
-          premake5 gmake
-          premake5 ecc
         '';
       });
     });
