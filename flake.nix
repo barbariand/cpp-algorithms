@@ -12,10 +12,9 @@
       pkgs = import nixpkgs {inherit system;};
     in {
       devShells.default = pkgs.mkShell (with pkgs; {
-        packages = [tree gdb clang clang-tools ];
+        packages = [gdb zig clang-tools ];
         shellHook = ''
-          export LD_LIBRARY_PATH=${inja}:${clang}/lib:${gdb}
-          export ISYSTEM=${clang}/bin/clang++
+          export CC="zig c++"
         '';
       });
     });
