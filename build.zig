@@ -37,11 +37,11 @@ pub fn get_testing_lib(b: *std.Build, target: std.Build.ResolvedTarget, optimize
         "-g",
     };
     testing_lib.addCSourceFile(.{
-        .file = b.path("include/testing/testing_sort.cc"),
+        .file = b.path("include/testing/sort.cc"),
         .flags = &lib_cflags,
     });
     testing_lib.addCSourceFile(.{
-        .file = b.path("include/testing/testing_framework.cc"), // Make sure this path is correct
+        .file = b.path("include/testing/framework.cc"), // Make sure this path is correct
         .flags = &lib_cflags,
     });
     testing_lib.linkLibCpp();

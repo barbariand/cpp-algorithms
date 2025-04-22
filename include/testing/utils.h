@@ -20,6 +20,8 @@
 namespace testing {
 
 // --- Color Constants ---
+const char *const BG_GREEN = "\033[42m"; // Green Background
+const char *const BG_RED = "\033[41m";   // Red Background
 const char *const RESET = "\033[0m";
 const char *const BLACK = "\033[30m";
 const char *const RED = "\033[31m";

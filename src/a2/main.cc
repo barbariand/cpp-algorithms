@@ -10,11 +10,11 @@ int main() {
   std::vector<AlgorithmTestConfig> algorithms = {
       {"mergesortBook", MergesortBook<Testing>},
       {"mergesort", Mergesort<Testing>},
+      {"heapsort", Heapsort<Testing>},
       {"quicksortLomuto", QuicksortLomuto<Testing>},
-      {"quicksortHoare", QuicksortHoare<Testing>},
       {"quicksortHoareimpproved", QuicksortHoareImproved<Testing>},
       {"quicksortHoaremedian3", QuicksortHoareImprovedMedian3<Testing>},
-      {"heapsort", Heapsort<Testing>},
+      {"quicksortHoare", QuicksortHoare<Testing>},
   };
 
   // Run the tests for all configured algorithms
