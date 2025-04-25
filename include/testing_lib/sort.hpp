@@ -1,12 +1,19 @@
 #ifndef CINDY_TESTING_FRAMEWORK_SORT
 #define CINDY_TESTING_FRAMEWORK_SORT
-#include "./framework.h"
-#include "complexity.h"
-#include <iostream>
+#include "complexity.hpp"
+#include "framework.hpp"
+#include <functional>
 #include <optional>
 #include <vector>
 namespace testing {
 using testing_complexity::Complexity;
+using SortingFunction = std::function<void(Testing[], int)>;
+struct SortingResult {
+  ControlStatsSnapshot snapshot;
+  bool sorted;
+  std::string test_case_name;
+  int array_size;
+};
 struct TestOptions {
   std::vector<int> sizes = {10, 50, 100, /*200, 500, 1000, 2000, 5000, 10000*/};
   bool verbose = false; // Default: Only log details on failure
@@ -25,7 +32,6 @@ struct AlgorithmTestConfig {
   TestOptions options = {};
 };
 
-using SortingFunction = std::function<void, Testing[], int>;
 enum class AlgorithmRunStatus {
   PASSED, // All verification checks passed, complexity matches if checked
   PASSED_COMPLEXITY_WARN, // Verification passed, but complexity estimate

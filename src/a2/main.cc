@@ -1,6 +1,6 @@
 #include "a2.h"
 #include <iostream>
-#include <testing.h>
+#include <testing>
 using std::string;
 using testing::AlgorithmTestConfig;
 using testing::print_colored_line;

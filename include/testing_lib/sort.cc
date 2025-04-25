@@ -1,29 +1,13 @@
-#include "sort.h"
-#include "./utils.h"
-#include "complexity.h"
-#include <algorithm>
-#include <functional>
-#include <iomanip>
+#include "sort.hpp"
+#include "complexity.hpp"
+#include "functions.hpp"
+#include "utils.hpp"
 #include <iostream>
-#include <limits>
-#include <map>
-#include <memory>
-#include <random>
 #include <sstream>
-#include <tuple>
-#include <vector>
 namespace testing {
-
-struct SortingResult {
-  ControlStatsSnapshot snapshot;
-  bool sorted;
-  std::string test_case_name;
-  int array_size;
-};
-
 SortingResult test_sort_func_single_case(const ArrayGenerator &generator,
                                          int size, const std::string &test_name,
-                                         SortingFunction,
+                                         const SortingFunction *funcptr,
                                          const TestOptions &options) {
 
   std::stringstream log_buffer;
@@ -124,7 +108,7 @@ void print_summary_table(const ResultsMap &results) {
 
       const char *bg_color_code = "";
       if (is_tty) {
-        bg_color_code = result.sorted ? testing::BG_GREEN : testing::BG_RED;
+        bg_color_code = result.sorted ? BG_GREEN : BG_RED;
         std::cout << bg_color_code;
       }
 
@@ -149,7 +133,7 @@ void print_summary_table(const ResultsMap &results) {
 
 std::pair<ResultsMap, bool> run_all_test_cases(
     const std::vector<std::pair<std::string, ArrayGenerator>> &test_generators,
-    const TestOptions &options, void (*funcptr)(Testing[], int)) {
+    const TestOptions &options, const SortingFunction *funcptr) {
   ResultsMap results_by_type;
   bool overall_verification_passed = true;
 
@@ -180,27 +164,24 @@ std::pair<ResultsMap, bool> run_all_test_cases(
 AlgorithmRunStatus testing_sort_func(std::string name,
                                      const SortingFunction *funcptr,
                                      const TestOptions &options) {
-  print_colored_line("--- Testing Algorithm: " + name + " ---",
-                     testing::BOLD_CYAN);
+  print_colored_line("--- Testing Algorithm: " + name + " ---", BOLD_CYAN);
 
   std::vector<std::pair<std::string, ArrayGenerator>> test_generators = {
-      {"Reversed", reversed},
-      {"Sorted", sorted},
-      {"Random Unique", random_unique},
-      {"Few Unique", few_unique},
-      {"Nearly Sorted", nearly_sorted}};
+      {"Reversed", testing_functions::reversed},
+      {"Sorted", testing_functions::sorted},
+      {"Random Unique", testing_functions::random_unique},
+      {"Few Unique", testing_functions::few_unique},
+      {"Nearly Sorted", testing_functions::nearly_sorted}};
 
   auto [results, all_passed_verification] =
       run_all_test_cases(test_generators, options, funcptr);
 
-  print_colored_line("\n--- Summary Table for: " + name + " ---",
-                     testing::BOLD_CYAN);
+  print_colored_line("\n--- Summary Table for: " + name + " ---", BOLD_CYAN);
   print_summary_table(results);
 
   bool complexity_mismatch = analyze_and_print_complexity(results, options);
 
-  print_colored_line("--- Finished Testing: " + name + " ---",
-                     testing::BOLD_CYAN);
+  print_colored_line("--- Finished Testing: " + name + " ---", BOLD_CYAN);
 
   if (!all_passed_verification) {
     return AlgorithmRunStatus::FAILED_VERIFICATION;
@@ -214,14 +195,14 @@ AlgorithmRunStatus testing_sort_func(std::string name,
 int test_all_algorithms(
     const std::vector<AlgorithmTestConfig> &algorithms_to_test) {
   print_colored_line("\n===== Running Full Algorithm Test Suite =====",
-                     testing::BOLD_CYAN);
+                     BOLD_CYAN);
 
   std::map<std::string, AlgorithmRunStatus> results;
   bool any_warnings_or_failures = false;
 
   for (const auto &config : algorithms_to_test) {
     AlgorithmRunStatus status =
-        testing_sort_func(config.name, config.function_pointer, config.options);
+        testing_sort_func(config.name, config.funcptr, config.options);
     results[config.name] = status;
 
     if (status != AlgorithmRunStatus::PASSED) {

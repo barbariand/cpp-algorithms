@@ -16,6 +16,7 @@ pub fn build(b: *std.Build) void {
     cpp_entries.add_library(testing_lib);
     cpp_entries.add_entry("a1", b.path("src/a1/main.cc"));
     cpp_entries.add_entry("a2", b.path("src/a2/main.cc"));
+    cpp_entries.add_entry("b1", b.path("src/b1/main.cc"));
     const run_step = b.step("run", "Run the specific app (use zig build run -- <app_name> [args])");
     run_step.dependOn(b.getInstallStep());
     for (cpp_entries.entries.items) |entry_step| { // entry_step is *std.Build.Step.Compile
@@ -33,10 +34,10 @@ pub fn get_testing_lib(b: *std.Build, target: std.Build.ResolvedTarget, optimize
         .optimize = optimize,
     });
     const lib_cflags = [_][]const u8{
-        "-std=c++17",
+        "-std=c++20",
         "-g",
     };
-    const files: []const []const u8 = &[_][]const u8{ "include/testing/sort.cc", "include/testing/framework.cc" };
+    const files: []const []const u8 = &[_][]const u8{ "include/testing_lib/sort.cc", "include/testing_lib/framework.cc" };
     testing_lib.addCSourceFiles(.{
         .files = files,
         .flags = &lib_cflags,

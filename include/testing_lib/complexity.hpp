@@ -1,8 +1,19 @@
 #ifndef CINDY_TESTING_FRAMEWORK_COMPLEXITY_H
 #define CINDY_TESTING_FRAMEWORK_COMPLEXITY_H
-#include "utils.h"
+#include "framework.hpp"
+#include "utils.hpp"
+#include <algorithm>
+#include <functional>
+#include <iomanip>
+#include <limits>
+#include <map>
+#include <memory>
+#include <random>
 #include <string>
+#include <tuple>
 namespace testing_complexity {
+using ::testing::ControlStatsSnapshot;
+using ::testing::Testing;
 enum class Complexity { O1, ON, ONLogN, ON2, Undetermined, InsufficientData };
 std::string complexity_to_string(Complexity c) {
   switch (c) {
@@ -22,65 +33,6 @@ std::string complexity_to_string(Complexity c) {
     std::cerr << "Warning: Unknown Complexity enum value!" << std::endl;
     return "Unknown";
   }
-}
-SortingResult test_sort_func_single_case(const ArrayGenerator &generator,
-                                         int size, const std::string &test_name,
-                                         void (*funcptr)(Testing[], int),
-                                         bool verbose = true) {
-  if (verbose) {
-    print_colored_line("\n-- Running Case: " + test_name +
-                           " (Size: " + std::to_string(size) + ") --",
-                       BOLD_CYAN);
-  }
-  Testing *arr = generator(size);
-  if (!arr) {
-    if (size <= 0) {
-      if (verbose) {
-        print_colored_line("  Skipped (Size <= 0)", testing::YELLOW);
-      }
-
-      return SortingResult{Control::get_instance().reset_and_get_snapshot(),
-                           true, test_name, size};
-    } else {
-      print_colored_line("  ERROR: Array generator returned nullptr!",
-                         testing::BOLD_RED);
-      return SortingResult{Control::get_instance().reset_and_get_snapshot(),
-                           false, test_name, size};
-    }
-  }
-
-  std::unique_ptr<Testing[]> arr_ptr(arr);
-
-  if (verbose) {
-    std::cout << "  Initial array: ";
-    printArray(arr_ptr.get(), size);
-  }
-
-  Control::get_instance().reset_and_get_snapshot();
-
-  funcptr(arr_ptr.get(), size);
-
-  ControlStatsSnapshot stats = Control::get_instance().reset_and_get_snapshot();
-
-  if (verbose) {
-    std::cout << "  Sorted array:  ";
-    printArray(arr_ptr.get(), size);
-  }
-
-  bool sorted_ok = std::is_sorted(arr_ptr.get(), arr_ptr.get() + size);
-
-  if (verbose) {
-    std::cout << "  Verification:  ";
-    if (sorted_ok) {
-      print_colored_line("Passed", testing::BOLD_GREEN);
-    } else {
-      print_colored_line("Failed", testing::BOLD_RED);
-    }
-    std::cout << "  Statistics:" << std::endl;
-    stats.print();
-  }
-
-  return SortingResult{stats, sorted_ok, test_name, size};
 }
 
 Complexity estimate_complexity_from_pair(double n1, double ops1, double n2,

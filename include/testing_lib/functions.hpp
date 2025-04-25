@@ -1,8 +1,12 @@
 #ifndef CINDY_TESTING_FRAMEWORK_SORTING_FUNCTIONS_H
 #define CINDY_TESTING_FRAMEWORK_SORTING_FUNCTIONS_H
-#include "framework.h"
-namespace testing {
-Testing *reversed(int size) {
+#include "framework.hpp"
+#include <functional>
+#include <random>
+namespace testing_functions {
+using ::testing::Testing;
+using ArrayGenerator = std::function<Testing *(int)>;
+inline Testing *reversed(int size) {
   if (size <= 0)
     return nullptr;
   Testing *arr = new Testing[size];
@@ -12,7 +16,7 @@ Testing *reversed(int size) {
   }
   return arr;
 }
-Testing *sorted(int size) {
+inline Testing *sorted(int size) {
   if (size <= 0)
     return nullptr;
   Testing *arr = new Testing[size];
@@ -22,7 +26,7 @@ Testing *sorted(int size) {
   return arr;
 }
 
-Testing *random_unique(int size) {
+inline Testing *random_unique(int size) {
   if (size <= 0)
     return nullptr;
   Testing *arr = new Testing[size];
@@ -35,7 +39,7 @@ Testing *random_unique(int size) {
   std::shuffle(arr, arr + size, g);
   return arr;
 }
-Testing *few_unique(int size) {
+inline Testing *few_unique(int size) {
   if (size <= 0)
     return nullptr;
   int num_unique = std::max(1, size / 10);
@@ -51,7 +55,7 @@ Testing *few_unique(int size) {
   return arr;
 }
 
-Testing *nearly_sorted(int size) {
+inline Testing *nearly_sorted(int size) {
   if (size <= 0)
     return nullptr;
   Testing *arr = sorted(size);
@@ -71,5 +75,5 @@ Testing *nearly_sorted(int size) {
   }
   return arr;
 }
-} // namespace testing
+} // namespace testing_functions
 #endif
