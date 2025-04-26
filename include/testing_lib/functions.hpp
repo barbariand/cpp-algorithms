@@ -1,11 +1,14 @@
 #ifndef CINDY_TESTING_FRAMEWORK_SORTING_FUNCTIONS_H
 #define CINDY_TESTING_FRAMEWORK_SORTING_FUNCTIONS_H
 #include "framework.hpp"
-#include <functional>
+#include "prelude.hpp"
+#include <algorithm>
 #include <random>
 namespace testing_functions {
-using ::testing::Testing;
-using ArrayGenerator = std::function<Testing *(int)>;
+PRELUDE;
+using testing_framework::Control;
+using testing_framework::ControlStatsSnapshot;
+using testing_framework::Testing;
 inline Testing *reversed(int size) {
   if (size <= 0)
     return nullptr;

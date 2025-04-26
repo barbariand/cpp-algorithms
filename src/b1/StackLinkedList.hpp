@@ -10,6 +10,7 @@ private:
     Node *next;
     Node(T data, Node *next = nullptr) : data(data), next(next) {}
   };
+  Node *start;
 
 public:
   StackLinkedList();
@@ -27,22 +28,39 @@ template <typename T> inline StackLinkedList<T>::StackLinkedList() {}
 
 template <typename T> inline StackLinkedList<T>::~StackLinkedList() {}
 
-template <typename T> inline void StackLinkedList<T>::push(const T &element) {}
+template <typename T> inline void StackLinkedList<T>::push(const T &element) {
+  start = Node(element, start);
+}
 
 template <typename T> inline T StackLinkedList<T>::pop() {
-  T removeThis;
-  return removeThis;
+  if (start == nullptr) {
+    return nullptr;
+  }
+  T data = start->data;
+  start = start->next;
+  return data;
 }
 
 template <typename T> inline const T &StackLinkedList<T>::peek() const {
-  T removeThis;
-  return removeThis;
+
+  if (start == nullptr) {
+    return nullptr;
+  }
+  return &start->data;
 }
 
 template <typename T> inline bool StackLinkedList<T>::isEmpty() const {
-  return false;
+  return start == nullptr;
 }
 
-template <typename T> inline int StackLinkedList<T>::size() const { return 0; }
+template <typename T> inline int StackLinkedList<T>::size() const {
+  Node *next = start;
+  int size = 0;
+  while (next != nullptr) {
+    next = next->next;
+    size++;
+  }
+  return size;
+}
 
 #endif

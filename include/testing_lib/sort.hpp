@@ -1,31 +1,17 @@
 #ifndef CINDY_TESTING_FRAMEWORK_SORT
 #define CINDY_TESTING_FRAMEWORK_SORT
-#include "complexity.hpp"
+#include "prelude.hpp"
 #include "framework.hpp"
 #include <functional>
+#include <map>
 #include <optional>
 #include <vector>
 namespace testing {
-using testing_complexity::Complexity;
-using SortingFunction = std::function<void(Testing[], int)>;
-struct SortingResult {
-  ControlStatsSnapshot snapshot;
-  bool sorted;
-  std::string test_case_name;
-  int array_size;
-};
-struct TestOptions {
-  std::vector<int> sizes = {10, 50, 100, /*200, 500, 1000, 2000, 5000, 10000*/};
-  bool verbose = false; // Default: Only log details on failure
-                        // If true: Log details even on success
-
-  // --- Complexity Analysis Options ---
-  bool estimate_based_on_comparisons = true; // Metric for estimation
-  std::optional<Complexity> expected_best_complexity =
-      std::nullopt; // Optional expected best case
-  std::optional<Complexity> expected_worst_complexity =
-      std::nullopt; // Optional expected worst case
-};
+using testing_framework::Complexity;
+using testing_framework::ControlStatsSnapshot;
+using testing_framework::Testing;
+using testing_framework::TestOptions;
+PRELUDE;
 struct AlgorithmTestConfig {
   std::string name;
   const SortingFunction &funcptr;

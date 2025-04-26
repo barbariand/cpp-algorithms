@@ -1,13 +1,38 @@
 #include "sort.hpp"
 #include "complexity.hpp"
+#include "framework.hpp"
 #include "functions.hpp"
 #include "utils.hpp"
 #include <iostream>
 #include <sstream>
 namespace testing {
+using testing_framework::Control;
+using testing_framework::ControlStatsSnapshot;
+using testing_framework::SortingResult;
+using testing_framework::Testing;
+using testing_framework::TestOptions;
+using testing_utils::BG_GREEN;
+using testing_utils::BG_RED;
+using testing_utils::BLACK;
+using testing_utils::BLUE;
+using testing_utils::BOLD_CYAN;
+using testing_utils::BOLD_GREEN;
+using testing_utils::BOLD_RED;
+using testing_utils::BOLD_YELLOW;
+using testing_utils::CYAN;
+using testing_utils::GREEN;
+using testing_utils::MAGENTA;
+using testing_utils::print_colored;
+using testing_utils::print_colored_line;
+using testing_utils::printArray;
+using testing_utils::RED;
+using testing_utils::RESET;
+using testing_utils::WHITE;
+using testing_utils::YELLOW;
+PRELUDE;
 SortingResult test_sort_func_single_case(const ArrayGenerator &generator,
                                          int size, const std::string &test_name,
-                                         const SortingFunction *funcptr,
+                                         const SortingFunction &funcptr,
                                          const TestOptions &options) {
 
   std::stringstream log_buffer;
@@ -29,7 +54,7 @@ SortingResult test_sort_func_single_case(const ArrayGenerator &generator,
       return result;
     } else {
       print_colored_line("  ERROR: Array generator returned nullptr!",
-                         testing::BOLD_RED);
+                         BOLD_RED);
       result.snapshot = Control::get_instance().reset_and_get_snapshot();
       result.sorted = false;
       return result;
@@ -67,16 +92,15 @@ SortingResult test_sort_func_single_case(const ArrayGenerator &generator,
 
   std::cout << "  Verification: ";
   if (result.sorted) {
-    print_colored_line("Passed", testing::BOLD_GREEN);
+    print_colored_line("Passed", BOLD_GREEN);
   } else {
-    print_colored_line("Failed", testing::BOLD_RED);
+    print_colored_line("Failed", BOLD_RED);
   }
 
   if (!result.sorted || options.verbose) {
     std::string log_header =
         !result.sorted ? "-- Failure Log --" : "-- Verbose Log --";
-    print_colored_line(log_header,
-                       !result.sorted ? testing::BOLD_RED : testing::YELLOW);
+    print_colored_line(log_header, !result.sorted ? BOLD_RED : YELLOW);
 
     std::cout << log_buffer.str();
     std::cout << "-------------------" << std::endl;
@@ -85,9 +109,6 @@ SortingResult test_sort_func_single_case(const ArrayGenerator &generator,
   return result;
 }
 
-using ResultsMap =
-    std::map<std::string, std::vector<std::pair<int, SortingResult>>>;
-
 void print_summary_table(const ResultsMap &results) {
 
   std::cout << std::left << std::setw(18) << "Test Case" << std::setw(10)
@@ -95,7 +116,7 @@ void print_summary_table(const ResultsMap &results) {
             << "Comparisons" << std::setw(18) << "Data Moves" << std::endl;
   std::cout << std::string(74, '-') << std::endl;
 
-  const bool is_tty = is_stdout_a_tty();
+  const bool is_tty = testing_utils::is_stdout_a_tty();
 
   for (const auto &type_pair : results) {
     const std::string &test_name = type_pair.first;
@@ -119,7 +140,7 @@ void print_summary_table(const ResultsMap &results) {
                 << result.snapshot.total_data_moves();
 
       if (is_tty) {
-        std::cout << testing::RESET;
+        std::cout << RESET;
       }
 
       std::cout << std::endl;
@@ -133,7 +154,7 @@ void print_summary_table(const ResultsMap &results) {
 
 std::pair<ResultsMap, bool> run_all_test_cases(
     const std::vector<std::pair<std::string, ArrayGenerator>> &test_generators,
-    const TestOptions &options, const SortingFunction *funcptr) {
+    const TestOptions &options, const SortingFunction &funcptr) {
   ResultsMap results_by_type;
   bool overall_verification_passed = true;
 
@@ -162,7 +183,7 @@ std::pair<ResultsMap, bool> run_all_test_cases(
 }
 
 AlgorithmRunStatus testing_sort_func(std::string name,
-                                     const SortingFunction *funcptr,
+                                     const SortingFunction &funcptr,
                                      const TestOptions &options) {
   print_colored_line("--- Testing Algorithm: " + name + " ---", BOLD_CYAN);
 
@@ -179,7 +200,8 @@ AlgorithmRunStatus testing_sort_func(std::string name,
   print_colored_line("\n--- Summary Table for: " + name + " ---", BOLD_CYAN);
   print_summary_table(results);
 
-  bool complexity_mismatch = analyze_and_print_complexity(results, options);
+  bool complexity_mismatch =
+      testing_complexity::analyze_and_print_complexity(results, options);
 
   print_colored_line("--- Finished Testing: " + name + " ---", BOLD_CYAN);
 
@@ -205,14 +227,12 @@ int test_all_algorithms(
         testing_sort_func(config.name, config.funcptr, config.options);
     results[config.name] = status;
 
-    if (status != AlgorithmRunStatus::PASSED) {
-      any_warnings_or_failures = true;
-    }
+    any_warnings_or_failures &= status != AlgorithmRunStatus::PASSED;
     std::cout << "\n----------------------------------------\n" << std::endl;
   }
 
   print_colored_line("===== Full Algorithm Test Suite Summary =====",
-                     testing::BOLD_CYAN);
+                     BOLD_CYAN);
   int pass_count = 0;
   int warn_count = 0;
   int fail_count = 0;
@@ -224,17 +244,17 @@ int test_all_algorithms(
     switch (status) {
     case AlgorithmRunStatus::PASSED:
       std::cout << "  [ PASS ] ";
-      print_colored_line(name, testing::BOLD_GREEN);
+      print_colored_line(name, BOLD_GREEN);
       pass_count++;
       break;
     case AlgorithmRunStatus::PASSED_COMPLEXITY_WARN:
       std::cout << "  [ WARN ] ";
-      print_colored_line(name + " (Complexity Mismatch)", testing::BOLD_YELLOW);
+      print_colored_line(name + " (Complexity Mismatch)", BOLD_YELLOW);
       warn_count++;
       break;
     case AlgorithmRunStatus::FAILED_VERIFICATION:
       std::cout << "  [ FAIL ] ";
-      print_colored_line(name + " (Verification Failed)", testing::BOLD_RED);
+      print_colored_line(name + " (Verification Failed)", BOLD_RED);
       fail_count++;
       break;
     }
@@ -245,8 +265,7 @@ int test_all_algorithms(
   std::cout << "  Passed:              " << pass_count << std::endl;
   std::cout << "  Passed (Warn):       " << warn_count << std::endl;
   std::cout << "  Failed Verification: " << fail_count << std::endl;
-  print_colored_line("============================================",
-                     testing::BOLD_CYAN);
+  print_colored_line("============================================", BOLD_CYAN);
 
   return any_warnings_or_failures ? 1 : 0;
 }

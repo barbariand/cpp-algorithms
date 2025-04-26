@@ -1,4 +1,3 @@
-
 #ifndef CINDY_TESTING_FRAMEWORK_UTILS_H // Conventionally add _H suffix
 #define CINDY_TESTING_FRAMEWORK_UTILS_H
 
@@ -17,7 +16,7 @@
 #define IS_TERMINAL(stream) isatty(fileno(stream))
 #endif
 
-namespace testing {
+namespace testing_utils {
 
 // --- Color Constants ---
 const char *const BG_GREEN = "\033[42m"; // Green Background

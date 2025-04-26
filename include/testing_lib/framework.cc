@@ -1,10 +1,6 @@
 #include "framework.hpp"
-#include <cstddef>
 #include <iostream>
-#include <new>
-#include <stdexcept>
-#include <utility>
-namespace testing {
+namespace testing_framework {
 void ControlStatsSnapshot::print() const {
   std::cout << "--- Control Stats Snapshot ---" << std::endl;
   std::cout << "  < : " << less_than_count << ", > : " << greater_than_count
@@ -216,4 +212,4 @@ std::ostream &operator<<(std::ostream &os, const Testing &obj) {
   os << obj.value; // Accessing private member 'value', ok since declared friend
   return os;
 }
-} // namespace testing
+} // namespace testing_framework

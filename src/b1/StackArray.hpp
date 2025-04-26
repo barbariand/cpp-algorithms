@@ -1,4 +1,3 @@
-
 #ifndef STACKARRAY_H
 #define STACKARRAY_H
 #include <stdexcept>
@@ -29,10 +28,10 @@ template <typename T> inline StackArray<T>::StackArray(int initialCapacity) {
 template <typename T> inline StackArray<T>::~StackArray() { delete[] elements; }
 
 template <typename T> inline void StackArray<T>::push(const T &element) {
-  elements[amount + 1] = element;
-  amount++;
+  amount = (amount++) % capacity;
+  elements[amount] = element;
 }
-
+template <typename T> inline expand();
 template <typename T> inline T StackArray<T>::pop() {
   T element = elements[amount];
   amount--;

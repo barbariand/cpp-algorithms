@@ -1,0 +1,6 @@
+#ifndef CINDY_TESTING
+#define CINDY_TESTING
+#include "framework.hpp"
+#include "sort.hpp"
+#include "utils.hpp"
+#endif
